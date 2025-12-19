@@ -6,51 +6,59 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin();
+    // HARDCODED LOGIC FOR DEMO
+    // In real app, this would verify with backend
+    if (email === 'admin@post.com' && password === 'admin') {
+      onLogin('admin'); // Log in as Admin
+    } else {
+      onLogin('user'); // Log in as User
+    }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white rounded-3xl shadow-2xl overflow-hidden">
-      <div className="bg-red-700 px-8 py-6 text-white text-center">
-        <h2 className="text-2xl font-bold">Welcome Back</h2>
-        <p className="text-red-100 text-sm mt-1">Login to your smart dashboard</p>
-      </div>
+    <div className="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Login to Account</h2>
       
-      <div className="p-8">
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Email / ID</label>
-            <input 
-              type="text" 
-              required 
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:bg-white focus:border-red-500 transition"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Password</label>
-            <input 
-              type="password" 
-              required 
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:bg-white focus:border-red-500 transition"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <button className="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition">
-            Sign In Securely
-          </button>
-        </form>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500">
-            Don't have an account? 
-            <button onClick={onSwitchToSignup} className="text-red-700 font-bold hover:underline ml-2">
-              Register
-            </button>
-          </p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+          <input 
+            type="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-red-500"
+            placeholder="admin@post.com for Admin"
+            required 
+          />
         </div>
+        
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <input 
+            type="password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-red-500"
+            placeholder="admin for Admin"
+            required 
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          className="w-full bg-red-700 text-white font-bold py-2 px-4 rounded hover:bg-red-800 transition duration-200"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-600">
+          New User?{' '}
+          <button onClick={onSwitchToSignup} className="text-red-700 font-bold hover:underline">
+            Register Here
+          </button>
+        </p>
       </div>
     </div>
   );

@@ -1,26 +1,46 @@
 // server/index.js
+require('dotenv').config(); // Load environment variables first
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db'); // <--- Import DB Config
-const trackingRoutes = require('./routes/trackingRoutes'); // <--- Import Routes
 
-dotenv.config();
-
-// 1. Connect to Database
-connectDB(); 
+// Import internal modules
+const consignmentRoutes = require('./routes/consignmentRoutes');
+const initScheduler = require('./utils/scheduler'); // The Cron job we discussed
 
 const app = express();
 
-// 2. Middleware
-app.use(express.json());
-app.use(cors());
+// --- Middlewares ---
+app.use(cors()); // Allow frontend (React) to talk to backend
+app.use(express.json()); // Parse incoming JSON payloads
 
-// 3. Mount Routes
-app.use('/api', trackingRoutes); // Now logic lives at /api/track
+// --- Database Connection ---
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ MongoDB Connected Successfully');
+  } catch (err) {
+    console.error('❌ MongoDB Connection Failed:', err.message);
+    process.exit(1); // Exit process with failure
+  }
+};
+connectDB();
 
-const PORT = process.env.PORT || 5000;
+// --- Routes ---
+// All consignment related endpoints will start with /api/consignment
+app.use('/api/consignment', consignmentRoutes);
 
+// Health Check Route (Good for testing if server is running)
+app.get('/', (req, res) => {
+  res.send('Logistics Backend is Running...');
+});
+
+// --- Initialize Background Jobs ---
+// Starts the 12-hour cycle to check ML delays
+initScheduler(); 
+
+// --- Start Server ---
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
